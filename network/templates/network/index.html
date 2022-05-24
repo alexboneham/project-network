@@ -1,5 +1,24 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+
+<div class="row">
+    <div class="col">
+        <div class="card bg-light border-secondary mt-2">
+            <div class="card-body">
+                <div class="card-title">
+                    <h5>New Post</h5>
+                </div>
+                <div class="card-text">
+                    <form action="{% url 'new' %}" method="POST">
+                        {% csrf_token %}
+                        {{ form }}
+                        <input type="submit" value="Add Post" class="btn btn-primary btn-sm mt-1">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
