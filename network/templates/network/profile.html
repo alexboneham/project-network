@@ -1,0 +1,28 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block title %} {{user_profile.username}}'s profile {% endblock title %}
+
+{% block body %} 
+<div class="container">
+    <div class="row justify-content-center mt-2">
+        <div class="col-6 text-center">
+            <img class="img-fluid" id="profile-img" src="{{user_profile.image}}" alt="">
+            <h1>{{ user_profile.username }}</h1> 
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Est minima voluptas, obcaecati ipsam quas laudantium maiores labore blanditiis aspernatur.</p>   
+            <p><strong>3 followers ・ 2 following</strong></p>
+
+            {% if user.is_authenticated and user != user_profile  %}
+            <button class="btn btn-sm btn-primary" id="follow-btn">Follow</button>
+            {% endif %}
+
+        </div>
+    </div>
+    
+</div>
+
+{% block script %}
+<script src="{% static 'network/profile.js' %}"></script>
+{% endblock script %}
+
+{% endblock body %}

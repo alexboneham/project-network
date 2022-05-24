@@ -33,6 +33,12 @@ def new(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+def profile(request, name):
+    return render(request, "network/profile.html", {
+        "user_profile": User.objects.get(username = name)
+    })
+
+
 def login_view(request):
     if request.method == "POST":
 
@@ -62,6 +68,11 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+        image = request.POST["image"]
+
+        # Add default image if not provided
+        if not image:
+            image = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -74,6 +85,7 @@ def register(request):
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
+            user.image = image
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {
