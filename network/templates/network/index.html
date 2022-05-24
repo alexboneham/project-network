@@ -2,6 +2,8 @@
 
 {% block body %}
 
+{% include "network/partials/messages.html" %}
+
 <div class="row">
     <div class="col">
         <div class="card bg-light border-secondary mt-2">
@@ -22,3 +24,6 @@
 </div>
 
 {% endblock %}
+
+
+{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}

@@ -12,5 +12,5 @@ class Post(models.Model):
     likers = models.ManyToManyField(User, blank=True, related_name="liked_posts")
 
     def __str__(self):
-        return f"Post by: {self.author}"
+        return f"{self.author}: '{self.content[0:15]}...'"
     

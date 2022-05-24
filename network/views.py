@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
 from .forms import *
 
 def index(request):
@@ -15,8 +16,20 @@ def index(request):
 
 @login_required
 def new(request):
-    content = request.POST["content"]
-    return HttpResponse(f"Body is {content}")
+    if request.method == 'POST':
+
+        # Validate form data
+        form = NewPostForm(request.POST)
+        if form.is_valid():
+
+            # Create new post in database
+            data = form.cleaned_data
+            p = Post(content = data["content"], author = User.objects.get(pk=request.user.id))
+            p.save()
+            messages.success(request, "Successfully added a new post!")
+
+    return HttpResponseRedirect(reverse("index"))
+
 
 def login_view(request):
     if request.method == "POST":
