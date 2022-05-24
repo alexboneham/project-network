@@ -10,8 +10,10 @@ from .models import User, Post
 from .forms import *
 
 def index(request):
+    posts =Post.objects.all()
     return render(request, "network/index.html", {
-        "form": NewPostForm()
+        "form": NewPostForm(),
+        "posts": posts
     })
 
 @login_required

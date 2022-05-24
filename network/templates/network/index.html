@@ -4,6 +4,8 @@
 
 {% include "network/partials/messages.html" %}
 
+<h1 class="display-3">All Posts</h1>
+
 <div class="row">
     <div class="col">
         <div class="card bg-light border-secondary mt-2">
@@ -22,6 +24,24 @@
         </div>
     </div>
 </div>
+
+{% for post in posts %}
+
+<div class="row">
+    <div class="col">
+        <div class="card mt-2">
+            <div class="card-body">
+                <h5 class="card-title">{{ post.author }}</h5>
+                <p class="card-text mt-1">{{ post.content }}</p>
+                <p><span class="mr-2">&#10084;</span>0</p>
+            </div>
+            <div class="card-footer text-muted">
+                {{ post.timestamp }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}
 
