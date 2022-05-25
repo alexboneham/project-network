@@ -13,7 +13,8 @@ def index(request):
     posts =Post.objects.all()
     return render(request, "network/index.html", {
         "form": NewPostForm(),
-        "posts": posts
+        "posts": posts,
+        "title": "All Posts"
     })
 
 @login_required
@@ -34,13 +35,24 @@ def new(request):
 
 
 def profile(request, name):
-
     posts = User.objects.get(username = name).posts.all().order_by('-id')
 
     return render(request, "network/profile.html", {
         "user_profile": User.objects.get(username = name),
         "posts": posts
     })
+
+@login_required
+def following(request):
+    following = User.objects.get(pk=request.user.id).following.all()
+    posts = Post.objects.filter(author__in = following)
+
+    return render(request, "network/index.html", {
+        "form": NewPostForm(),
+        "title": "Following",
+        "posts": posts
+    })
+
 
 
 def login_view(request):

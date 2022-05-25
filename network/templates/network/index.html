@@ -1,6 +1,7 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
-{% block title %}All Posts{% endblock title %}
+{% block title %}{{title}}{% endblock title %}
 
 {% block body %}
 
@@ -8,9 +9,11 @@
 
 <div class="container mb-2">
 
-    <h1 class="display-3">All Posts</h1>
+    <h1 class="display-3">{{ title }}</h1>
 
-    <div class="row">
+    <button class="btn-lg btn-info mb-1" id="new-post-btn">NEW POST</button>
+
+    <div class="row" id="new-post" style="display: none">
         <div class="col">
             <div class="card bg-light border-secondary mt-2">
                 <div class="card-body">
@@ -32,7 +35,10 @@
     {% include "network/partials/posts.html" %}
 
 </div>
+
+{% block script %}
+<script src="{% static 'network/index.js' %}"></script>
+{% endblock script %}
+
 {% endblock %}
 
-
-{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}
