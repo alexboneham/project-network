@@ -9,16 +9,20 @@
         <div class="col-6 text-center">
             <img class="img-fluid" id="profile-img" src="{{user_profile.image}}" alt="">
             <h1>{{ user_profile.username }}</h1> 
+            {% if user_profile.description %}
+            {{ user_profile.description }}
+            {% else %}
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Est minima voluptas, obcaecati ipsam quas laudantium maiores labore blanditiis aspernatur.</p>   
-            <p><strong>3 followers ・ 2 following</strong></p>
-
+            {% endif %}
+            <p><strong>{{ user_profile.followers.count }} followers ・ {{ user_profile.following.count }} following</strong></p>
             {% if user.is_authenticated and user != user_profile  %}
             <button class="btn btn-sm btn-primary" id="follow-btn">Follow</button>
             {% endif %}
-
         </div>
     </div>
-    
+
+    {% include "network/partials/posts.html" %}
+
 </div>
 
 {% block script %}

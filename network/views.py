@@ -34,8 +34,12 @@ def new(request):
 
 
 def profile(request, name):
+
+    posts = User.objects.get(username = name).posts.all().order_by('-id')
+
     return render(request, "network/profile.html", {
-        "user_profile": User.objects.get(username = name)
+        "user_profile": User.objects.get(username = name),
+        "posts": posts
     })
 
 

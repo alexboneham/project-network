@@ -4,6 +4,8 @@ from django.db import models
 
 class User(AbstractUser):
     image = models.URLField(null=True)
+    description = models.TextField(null=True, blank=True)
+    followers = models.ManyToManyField("User", blank=True, related_name="following")
 
 
 class Post(models.Model):
