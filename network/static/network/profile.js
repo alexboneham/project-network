@@ -1,37 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    form = document.querySelector('#follow-form');
+
+    // Avoids error when hiding form in DOM 
+
+    if (form) {
+        form.onsubmit = () => {
+
+            const id = document.querySelector('#profile-id').value
     
-    document.querySelector('#follow-form').onsubmit = () => {
-
-        const id = document.querySelector('#profile-id').value
-        const body = JSON.stringify({isFollowing: document.querySelector('#isFollowing').value})
-
-        // Make fetch request to "/users/user_id/follow"
-        fetch(`/users/${id}/follow`, {
-            method: 'PUT',
-            body: body
-        })
-        .then(response => response.json())
-        .then(result => console.log(result))
-
-        return false
-        
-        
-
-
-
-
-
-        // Toggle button text depending on previous status (maybe do through API response instead)
-        // const btn = document.querySelector('#follow-btn');
-        // const choices = ['Follow', 'Unfollow'];
-
-        // if (btn.innerHTML === choices[0]) {
-        //     btn.innerHTML = choices[1];
-        // } else {
-        //     btn.innerHTML = choices[0];
-        // }
-
+            // Make fetch request to "/users/user_id/follow"
+            fetch(`/users/${id}/follow`, {
+                method: 'PUT'
+            })
+            .then(response => response.json())
+            .then(result => {
+    
+                // Update the follow button
+                if (result.isFollowing) {
+                    document.querySelector('#follow-btn').innerHTML = 'Unfollow'
+                } else {
+                    document.querySelector('#follow-btn').innerHTML = 'Follow'
+                }
+    
+                // Update the followers count
+                document.querySelector('#followers').innerHTML = result.count
+                
+            })
+    
+            return false
+    
+        }
     }
 
 })

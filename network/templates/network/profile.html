@@ -14,7 +14,7 @@
             {% else %}
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Est minima voluptas, obcaecati ipsam quas laudantium maiores labore blanditiis aspernatur.</p>   
             {% endif %}
-            <p><strong>{{ user_profile.followers.count }} followers ・ {{ user_profile.following.count }} following</strong></p>
+            <p><strong><span id="followers">{{ user_profile.followers.count }}</span> followers ・ {{ user_profile.following.count }} following</strong></p>
             {% if user.is_authenticated and user != user_profile  %}
             <form id="follow-form">
                 <input type="hidden" name="id" value="{{user_profile.id}}" id="profile-id">

@@ -72,14 +72,23 @@ def follow(request, id):
         return JsonResponse({"error": "PUT request required"}, status=400)
     
     # API for processing following/unfollowing of profile
-    print(f"Profile user is: {User.objects.get(pk=id)}")
-    print(f"Request user is: {request.user}")
-    print(f"Request method was: {request.method}")
+    profile = User.objects.get(pk=id)
 
-    data = json.loads(request.body)
-    print(data)
+    # Check if current user is following profile
+    isFollowing = True if profile.followers.filter(username=request.user) else False
 
-    return JsonResponse({"success": "API worked!"}, status=200)
+    if isFollowing == False:
+        profile.followers.add(User.objects.get(pk=request.user.id))
+        isFollowing = True
+    elif isFollowing:
+        profile.followers.remove(User.objects.get(pk=request.user.id))
+        isFollowing = False
+    else:
+        return JsonResponse({"error": "Database returned unknown response"}) 
+    
+    count = profile.followers.all().count()
+
+    return JsonResponse({"isFollowing": isFollowing, "count": count}, safe=False)
 
 
 
