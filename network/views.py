@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -66,12 +67,20 @@ def following(request):
 @login_required
 def follow(request, id):
 
+    if request.method != 'PUT':
+
+        return JsonResponse({"error": "PUT request required"}, status=400)
+    
     # API for processing following/unfollowing of profile
     print(f"Profile user is: {User.objects.get(pk=id)}")
     print(f"Request user is: {request.user}")
     print(f"Request method was: {request.method}")
 
-    return JsonResponse({"success": "API worked!"}, status=200, safe=False)
+    data = json.loads(request.body)
+    print(data)
+
+    return JsonResponse({"success": "API worked!"}, status=200)
+
 
 
 

@@ -18,6 +18,7 @@
             {% if user.is_authenticated and user != user_profile  %}
             <form id="follow-form">
                 <input type="hidden" name="id" value="{{user_profile.id}}" id="profile-id">
+                <input type="hidden" name="isFollowing" value="{{isFollowing}}" id="isFollowing">
                 <button class="btn btn-sm btn-primary" id="follow-btn">{% if isFollowing %}Unfollow{% else %}Follow{% endif %}</button>
             </form>
             {% endif %}

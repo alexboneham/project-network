@@ -4,10 +4,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#follow-form').onsubmit = () => {
 
         const id = document.querySelector('#profile-id').value
+        const body = JSON.stringify({isFollowing: document.querySelector('#isFollowing').value})
 
         // Make fetch request to "/users/user_id/follow"
-        fetch(`/users/${id}/follow`)
-        .then(response => console.log(response))
+        fetch(`/users/${id}/follow`, {
+            method: 'PUT',
+            body: body
+        })
+        .then(response => response.json())
+        .then(result => console.log(result))
 
         return false
         
