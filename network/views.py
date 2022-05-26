@@ -5,12 +5,14 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
 from .forms import *
 
 def index(request):
-    posts =Post.objects.all()
+    posts =Post.objects.all().order_by("-timestamp")
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "posts": posts,
@@ -35,11 +37,18 @@ def new(request):
 
 
 def profile(request, name):
-    posts = User.objects.get(username = name).posts.all().order_by('-id')
+
+    # Load context infomation for profile page view
+    profile = User.objects.get(username = name)
+    posts = profile.posts.all().order_by('-id')
+
+    # Check if current user is following profile
+    isFollowing = True if profile.followers.filter(username=request.user) else False
 
     return render(request, "network/profile.html", {
         "user_profile": User.objects.get(username = name),
-        "posts": posts
+        "posts": posts,
+        "isFollowing": isFollowing
     })
 
 @login_required
@@ -52,6 +61,17 @@ def following(request):
         "title": "Following",
         "posts": posts
     })
+
+@csrf_exempt
+@login_required
+def follow(request, id):
+
+    # API for processing following/unfollowing of profile
+    print(f"Profile user is: {User.objects.get(pk=id)}")
+    print(f"Request user is: {request.user}")
+    print(f"Request method was: {request.method}")
+
+    return JsonResponse({"success": "API worked!"}, status=200, safe=False)
 
 
 

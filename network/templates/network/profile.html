@@ -16,7 +16,10 @@
             {% endif %}
             <p><strong>{{ user_profile.followers.count }} followers ・ {{ user_profile.following.count }} following</strong></p>
             {% if user.is_authenticated and user != user_profile  %}
-            <button class="btn btn-sm btn-primary" id="follow-btn">Follow</button>
+            <form id="follow-form">
+                <input type="hidden" name="id" value="{{user_profile.id}}" id="profile-id">
+                <button class="btn btn-sm btn-primary" id="follow-btn">{% if isFollowing %}Unfollow{% else %}Follow{% endif %}</button>
+            </form>
             {% endif %}
         </div>
     </div>
