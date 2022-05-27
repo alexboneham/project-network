@@ -1,4 +1,3 @@
-import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -8,12 +7,17 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 
 from .models import User, Post
 from .forms import *
 
 def index(request):
-    posts =Post.objects.all().order_by("-timestamp")
+    posts = Post.objects.all().order_by("-timestamp")
+
+    pag = Paginator(posts, 2)
+        
+
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "posts": posts,
@@ -67,11 +71,11 @@ def following(request):
 @login_required
 def follow(request, id):
 
+    # API for processing following/unfollowing of profile
     if request.method != 'PUT':
 
         return JsonResponse({"error": "PUT request required"}, status=400)
     
-    # API for processing following/unfollowing of profile
     profile = User.objects.get(pk=id)
 
     # Check if current user is following profile
