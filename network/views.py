@@ -77,6 +77,9 @@ def profile(request, name):
 
         # Request method is PUT.
         # API for processing following/unfollowing of profile
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "User is not logged in"})
+
         if isFollowing == False:
             profile.followers.add(User.objects.get(pk=request.user.id))
             isFollowing = True
