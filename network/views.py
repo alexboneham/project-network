@@ -24,6 +24,19 @@ def index(request):
         "title": "All Posts"
     })
 
+
+@login_required
+def following(request):
+    following = User.objects.get(pk=request.user.id).following.all()
+    posts = Post.objects.filter(author__in = following)
+
+    return render(request, "network/index.html", {
+        "form": NewPostForm(),
+        "title": "Following",
+        "posts": posts
+    })
+
+
 @login_required
 def new(request):
     if request.method == 'POST':
@@ -41,32 +54,24 @@ def new(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+@csrf_exempt
 def profile(request, name):
 
-    # Load context infomation for profile page view
-    profile = User.objects.get(username = name)
-    posts = profile.posts.all().order_by('-id')
+    if request.method != 'GET' and request.method != 'PUT':
 
-    # Check if current user is following profile
+        print(f"Method was: {request.method}")
+        return HttpResponse('Error')
+    
+    # Query database for info about profile user
+    profile = User.objects.get(username = name)
     isFollowing = True if profile.followers.filter(username=request.user) else False
 
-    return render(request, "network/profile.html", {
-        "user_profile": User.objects.get(username = name),
-        "posts": posts,
-        "isFollowing": isFollowing
-    })
+    if request.method == 'GET':
 
-@login_required
-def following(request):
-    following = User.objects.get(pk=request.user.id).following.all()
-    posts = Post.objects.filter(author__in = following)
+        # Load context infomation for profile page view
+        posts = profile.posts.all().order_by('-id')
 
-    return render(request, "network/index.html", {
-        "form": NewPostForm(),
-        "title": "Following",
-        "posts": posts
-    })
-
+<<<<<<< HEAD
 @csrf_exempt
 @login_required
 def follow(request, id):
@@ -87,14 +92,33 @@ def follow(request, id):
     elif isFollowing:
         profile.followers.remove(User.objects.get(pk=request.user.id))
         isFollowing = False
-    else:
-        return JsonResponse({"error": "Database returned unknown response"}) 
+=======
+        return render(request, "network/profile.html", {
+            "user_profile": profile,
+            "posts": posts,
+            "isFollowing": isFollowing
+        })
     
-    count = profile.followers.all().count()
+>>>>>>> master
+    else:
 
-    return JsonResponse({"isFollowing": isFollowing, "count": count}, safe=False)
+        # Request method is PUT.
+        # API for processing following/unfollowing of profile
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "User is not logged in"})
 
+        if isFollowing == False:
+            profile.followers.add(User.objects.get(pk=request.user.id))
+            isFollowing = True
+        elif isFollowing:
+            profile.followers.remove(User.objects.get(pk=request.user.id))
+            isFollowing = False
+        else:
+            return JsonResponse({"error": "Database returned unknown response"}) 
+        
+        count = profile.followers.all().count()
 
+        return JsonResponse({"isFollowing": isFollowing, "count": count}, safe=False)
 
 
 def login_view(request):
