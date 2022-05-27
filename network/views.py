@@ -15,16 +15,12 @@ from .forms import *
 def index(request):
 
     posts = Post.objects.all().order_by("-timestamp")
-    paginator = Paginator(posts, 3)
-
-    page_num = request.GET.get('page')
-    page_obj = paginator.get_page(page_num)
+    page_obj = paginate(request, posts, 4)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "posts": page_obj,
         "title": "All Posts",
-        "page_obj": page_obj
     })
 
 
@@ -32,16 +28,12 @@ def index(request):
 def following(request):
     following = User.objects.get(pk=request.user.id).following.all()
     posts = Post.objects.filter(author__in = following)
-    paginator = Paginator(posts, 3)
-
-    page_num = request.GET.get('page')
-    page_obj = paginator.get_page(page_num)
+    page_obj = paginate(request, posts, 4)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "title": "Following",
         "posts": page_obj,
-        "page_obj": page_obj
     })
 
 
@@ -78,10 +70,11 @@ def profile(request, name):
 
         # Load context infomation for profile page view
         posts = profile.posts.all().order_by('-id')
+        page_obj = paginate(request, posts, 4)
 
         return render(request, "network/profile.html", {
             "user_profile": profile,
-            "posts": posts,
+            "posts": page_obj,
             "isFollowing": isFollowing
         })
     
@@ -162,3 +155,15 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+
+def paginate(request, posts, num):
+
+    # Helper function for pagination
+    paginator = Paginator(posts, num)
+    page_num = request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
+
+    return page_obj
+
