@@ -12,10 +12,12 @@ from django.core.paginator import Paginator
 from .models import User, Post
 from .forms import *
 
-def index(request):
+# Define global variables
+PAGINATION_LIMIT = 10
 
+def index(request):
     posts = Post.objects.all().order_by("-timestamp")
-    page_obj = paginate(request, posts, 4)
+    page_obj = paginate(request, posts, PAGINATION_LIMIT)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
@@ -28,7 +30,7 @@ def index(request):
 def following(request):
     following = User.objects.get(pk=request.user.id).following.all()
     posts = Post.objects.filter(author__in = following)
-    page_obj = paginate(request, posts, 4)
+    page_obj = paginate(request, posts, PAGINATION_LIMIT)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
@@ -56,7 +58,6 @@ def new(request):
 
 @csrf_exempt
 def profile(request, name):
-
     if request.method != 'GET' and request.method != 'PUT':
 
         print(f"Method was: {request.method}")
@@ -70,7 +71,7 @@ def profile(request, name):
 
         # Load context infomation for profile page view
         posts = profile.posts.all().order_by('-id')
-        page_obj = paginate(request, posts, 4)
+        page_obj = paginate(request, posts, PAGINATION_LIMIT)
 
         return render(request, "network/profile.html", {
             "user_profile": profile,
