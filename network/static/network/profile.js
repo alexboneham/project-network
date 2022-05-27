@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.onsubmit = () => {
 
-            const id = document.querySelector('#profile-id').value
+            const name = document.querySelector('#profile-name').value
     
             // Make fetch request to "/users/user_id/follow"
-            fetch(`/users/${id}/follow`, {
+            fetch(`/users/${name}`, {
                 method: 'PUT'
             })
             .then(response => response.json())
