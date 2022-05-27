@@ -13,15 +13,18 @@ from .models import User, Post
 from .forms import *
 
 def index(request):
-    posts = Post.objects.all().order_by("-timestamp")
 
-    pag = Paginator(posts, 2)
-        
+    posts = Post.objects.all().order_by("-timestamp")
+    paginator = Paginator(posts, 3)
+
+    page_num = request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
-        "posts": posts,
-        "title": "All Posts"
+        "posts": page_obj,
+        "title": "All Posts",
+        "page_obj": page_obj
     })
 
 
@@ -29,11 +32,16 @@ def index(request):
 def following(request):
     following = User.objects.get(pk=request.user.id).following.all()
     posts = Post.objects.filter(author__in = following)
+    paginator = Paginator(posts, 3)
+
+    page_num = request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "title": "Following",
-        "posts": posts
+        "posts": page_obj,
+        "page_obj": page_obj
     })
 
 
@@ -71,35 +79,12 @@ def profile(request, name):
         # Load context infomation for profile page view
         posts = profile.posts.all().order_by('-id')
 
-<<<<<<< HEAD
-@csrf_exempt
-@login_required
-def follow(request, id):
-
-    # API for processing following/unfollowing of profile
-    if request.method != 'PUT':
-
-        return JsonResponse({"error": "PUT request required"}, status=400)
-    
-    profile = User.objects.get(pk=id)
-
-    # Check if current user is following profile
-    isFollowing = True if profile.followers.filter(username=request.user) else False
-
-    if isFollowing == False:
-        profile.followers.add(User.objects.get(pk=request.user.id))
-        isFollowing = True
-    elif isFollowing:
-        profile.followers.remove(User.objects.get(pk=request.user.id))
-        isFollowing = False
-=======
         return render(request, "network/profile.html", {
             "user_profile": profile,
             "posts": posts,
             "isFollowing": isFollowing
         })
     
->>>>>>> master
     else:
 
         # Request method is PUT.
