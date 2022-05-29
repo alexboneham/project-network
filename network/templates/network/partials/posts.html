@@ -14,14 +14,12 @@
                         <textarea name="editedContent" id="editedContent" cols="30" rows="2" class="form-control mr-2">{{ post.content }}</textarea>
                         <input type="submit" value="Save" class="btn btn-primary form-control">
                 </form>
-
                 <div class="mb-2">
                     <i id="likeBtn" data-feather="thumbs-up" data-color="blue" data-id="{{ post.id }}"
                     {% if post in liked_posts %}style="color: blue;"{% endif %}
                     >
                     </i><span class="ml-1" id="likeCount">{{ post.likers.count }}</span>
                 </div>
-
                 {% if user.is_authenticated and user == post.author %}
                 <button type="button" class="btn btn-outline-info card-link" id="edit-btn">Edit</button>
                 {% endif %}
@@ -39,6 +37,9 @@
 
 <script>feather.replace()</script>
 <script src="{% static 'network/posts.js' %}"></script>
+{% if user.is_authenticated %}
+<script src="{% static 'network/like.js' %}"></script>
+{% endif %}
 
 
 
