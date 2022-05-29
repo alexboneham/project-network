@@ -20,10 +20,13 @@ def index(request):
     posts = Post.objects.all().order_by("-timestamp")
     page_obj = paginate(request, posts, PAGINATION_LIMIT)
 
+    liked_posts = request.user.liked_posts.all()
+
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "posts": page_obj,
         "title": "All Posts",
+        "liked_posts": liked_posts
     })
 
 
@@ -71,7 +74,7 @@ def edit_post(request, id):
     p.content = data["newContent"]
     p.save()
     
-    return JsonResponse({"success": "We hit the route"})
+    return JsonResponse({"success": "Post has been edited"})
 
 @csrf_exempt
 @login_required

@@ -16,7 +16,10 @@
                 </form>
 
                 <div class="mb-2">
-                    <i id="likeBtn" data-feather="thumbs-up" data-color="blue" data-id="{{ post.id }}"></i><span class="ml-1" id="likeCount">{{ post.likers.count }}</span>
+                    <i id="likeBtn" data-feather="thumbs-up" data-color="blue" data-id="{{ post.id }}"
+                    {% if post in liked_posts %}style="color: blue;"{% endif %}
+                    >
+                    </i><span class="ml-1" id="likeCount">{{ post.likers.count }}</span>
                 </div>
 
                 {% if user.is_authenticated and user == post.author %}
