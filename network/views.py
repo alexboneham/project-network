@@ -19,7 +19,6 @@ PAGINATION_LIMIT = 10
 def index(request):
     posts = Post.objects.all().order_by("-timestamp")
     page_obj = paginate(request, posts, PAGINATION_LIMIT)
-
     liked_posts = request.user.liked_posts.all()
 
     return render(request, "network/index.html", {
@@ -35,11 +34,13 @@ def following(request):
     following = User.objects.get(pk=request.user.id).following.all()
     posts = Post.objects.filter(author__in = following)
     page_obj = paginate(request, posts, PAGINATION_LIMIT)
+    liked_posts = request.user.liked_posts.all()
 
     return render(request, "network/index.html", {
         "form": NewPostForm(),
         "title": "Following",
         "posts": page_obj,
+        "liked_posts": liked_posts
     })
 
 
@@ -121,11 +122,13 @@ def profile(request, name):
         # Load context infomation for profile page view
         posts = profile.posts.all().order_by('-id')
         page_obj = paginate(request, posts, PAGINATION_LIMIT)
+        liked_posts = request.user.liked_posts.all()
 
         return render(request, "network/profile.html", {
             "user_profile": profile,
             "posts": page_obj,
-            "isFollowing": isFollowing
+            "isFollowing": isFollowing,
+            "liked_posts": liked_posts
         })
     
     else:
