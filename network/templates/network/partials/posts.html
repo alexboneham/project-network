@@ -1,3 +1,4 @@
+{% load static %}
 {% for post in posts %}
 
 <div class="row justify-content-center">
@@ -6,12 +7,20 @@
             <div class="card-body pb-1">
                 <h5 class="card-title mb-0"><a href="{% url 'profile' post.author %}">{{ post.author }}</a></h5>
                 <p class="card-text"><small class="text-muted">{{ post.timestamp }}</small></p>
-                <p class="card-text">{{ post.content }}</p>
+                <p class="card-text" id="post-content">{{ post.content }}</p>                
+
+                <form id="edit-form" class="form-inline d-none">
+                        <input type="hidden" name="postId" value="{{ post.id }}">
+                        <textarea name="editedContent" id="editedContent" cols="30" rows="2" class="form-control mr-2">{{ post.content }}</textarea>
+                        <input type="submit" value="Save" class="btn btn-primary form-control">
+                </form>
+
                 <p class="cart-text"><span class="mr-2">&#10084;</span>{{ post.likers.count }}</p>
-                {% if user.is_authenticated %}
-                <a href="">Edit</a>
+
+                {% if user.is_authenticated and user == post.author %}
+                <button type="button" class="btn btn-outline-info" id="edit-btn">Edit</button>
                 {% endif %}
-                
+
             </div>
         </div>
     </div>
@@ -19,12 +28,5 @@
 
 {% endfor %}
 
+<script src="{% static 'network/posts.js' %}"></script>
 
-
-    
-    
-
-
-
-
-      

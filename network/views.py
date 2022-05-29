@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -54,6 +55,23 @@ def new(request):
             messages.success(request, "Successfully added a new post!")
 
     return HttpResponseRedirect(reverse("index"))
+
+@csrf_exempt
+@login_required
+def editPost(request, id):
+    if request.method != "PUT":
+        return JsonResponse({"error": "Request method must be PUT"})
+
+    p = Post.objects.get(pk=id)
+
+    if request.user != p.author:
+        return JsonResponse({"error": "Not valid user"})
+
+    data = json.loads(request.body)
+    p.content = data["newContent"]
+    p.save()
+    
+    return JsonResponse({"success": "We hit the route"})
 
 
 @csrf_exempt

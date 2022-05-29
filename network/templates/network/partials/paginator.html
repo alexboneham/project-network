@@ -1,5 +1,5 @@
-<nav aria-label="Page navigation" class="mt-2">
-    <ul class="pagination">
+<nav aria-label="Page navigation" class="mt-2" {% if not posts %}style="display: none;"{% endif %}>
+    <ul class="pagination justify-content-center">
 
         {% if posts.has_previous %}
         <li class="page-item"><a href="?page=1" class="page-link">&laquo;</a></li>
