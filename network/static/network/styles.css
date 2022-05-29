@@ -1,3 +1,7 @@
 #profile-img {
     border-radius: 30px;
 }
+
+svg {
+    vertical-align: top;
+}

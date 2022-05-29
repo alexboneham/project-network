@@ -58,7 +58,7 @@ def new(request):
 
 @csrf_exempt
 @login_required
-def editPost(request, id):
+def edit_post(request, id):
     if request.method != "PUT":
         return JsonResponse({"error": "Request method must be PUT"})
 
@@ -72,6 +72,34 @@ def editPost(request, id):
     p.save()
     
     return JsonResponse({"success": "We hit the route"})
+
+@csrf_exempt
+@login_required
+def like_post(request, id):
+    if request.method != "PUT":
+        return JsonResponse({"error": "Request method must be PUT"})
+    
+    p = Post.objects.get(pk=id)
+
+    likers = p.likers.all()
+
+    try:
+        if request.user in likers:
+            # Unlike post
+            p.likers.remove(request.user)
+            return JsonResponse({
+                "success": "User un-liked post",
+                "count": p.likers.count()
+            }, safe=False)
+        else: 
+            # Like post
+            p.likers.add(request.user)
+            return JsonResponse({
+                "success": "User liked post",
+                "count": p.likers.count()
+            }, safe=False)
+    except:
+        return JsonResponse({"error": "Something went wrong"})
 
 
 @csrf_exempt

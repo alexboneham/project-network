@@ -15,10 +15,12 @@
                         <input type="submit" value="Save" class="btn btn-primary form-control">
                 </form>
 
-                <p class="cart-text"><span class="mr-2">&#10084;</span>{{ post.likers.count }}</p>
+                <div class="mb-2">
+                    <i id="likeBtn" data-feather="thumbs-up" data-color="blue" data-id="{{ post.id }}"></i><span class="ml-1" id="likeCount">{{ post.likers.count }}</span>
+                </div>
 
                 {% if user.is_authenticated and user == post.author %}
-                <button type="button" class="btn btn-outline-info" id="edit-btn">Edit</button>
+                <button type="button" class="btn btn-outline-info card-link" id="edit-btn">Edit</button>
                 {% endif %}
 
             </div>
@@ -28,5 +30,12 @@
 
 {% endfor %}
 
+{% block script %}
+<script src="https://unpkg.com/feather-icons"></script>
+{% endblock script %}
+
+<script>feather.replace()</script>
 <script src="{% static 'network/posts.js' %}"></script>
+
+
 
