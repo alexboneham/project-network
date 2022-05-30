@@ -2,3 +2,4 @@
 __pycache__
 db.sqlite3
 /network/snippets
+node_modules

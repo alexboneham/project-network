@@ -10,6 +10,7 @@
                 <p class="card-text" id="post-content">{{ post.content }}</p>                
 
                 <form id="edit-form" class="form-inline d-none">
+                        {% csrf_token %}
                         <input type="hidden" name="postId" value="{{ post.id }}">
                         <textarea name="editedContent" id="editedContent" cols="30" rows="2" class="form-control mr-2">{{ post.content }}</textarea>
                         <input type="submit" value="Save" class="btn btn-primary form-control">
@@ -36,6 +37,7 @@
 {% endblock script %}
 
 <script>feather.replace()</script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 <script src="{% static 'network/posts.js' %}"></script>
 {% if user.is_authenticated %}
 <script src="{% static 'network/like.js' %}"></script>

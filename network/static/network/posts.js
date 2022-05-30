@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const contentDisplay = parent.querySelector('#post-content');      
         form.classList.toggle('d-none');
         contentDisplay.classList.toggle('d-none');
+
+        const csrftoken = Cookies.get('csrftoken');
     
         // Handle form submit
         form.onsubmit = () => {
@@ -23,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update database via fetch
             fetch(`/posts/${postId}/edit`, {
                 method: 'PUT',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
                 body: JSON.stringify({
                     newContent: newContent,
                 })

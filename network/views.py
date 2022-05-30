@@ -58,7 +58,7 @@ def new(request):
 
     return HttpResponseRedirect(reverse("index"))
 
-@csrf_exempt
+
 @login_required
 def edit_post(request, id):
     if request.method != "PUT":
