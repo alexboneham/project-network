@@ -12,10 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
             color === dataColor ? color = 'black' : color = dataColor;
             button.style.color = color;
 
+            // Get CSRF Token from cookies
+            const csrftoken = Cookies.get('csrftoken');
+
             // Make update to database like count
             const id = button.dataset.id;
             fetch(`/posts/${id}/like`, {
-                method: 'PUT'
+                method: 'PUT',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
             })
             .then(response => response.json())
             .then(result => {

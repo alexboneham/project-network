@@ -7,7 +7,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 
 from .models import User, Post
@@ -17,6 +16,8 @@ from .forms import *
 PAGINATION_LIMIT = 10
 
 def index(request):
+
+    # Load all posts
     posts = Post.objects.all().order_by("-timestamp")
     page_obj = paginate(request, posts, PAGINATION_LIMIT)
 
@@ -30,6 +31,8 @@ def index(request):
 
 @login_required
 def following(request):
+
+    # Load posts by followed users
     following = User.objects.get(pk=request.user.id).following.all()
     posts = Post.objects.filter(author__in = following)
     page_obj = paginate(request, posts, PAGINATION_LIMIT)
@@ -44,17 +47,19 @@ def following(request):
 
 @login_required
 def new(request):
-    if request.method == 'POST':
+    if request.method != 'POST':
+        messages.error(request, "Invalid request method")
+        return HttpResponseRedirect(reverse("index"))
 
-        # Validate form data
-        form = NewPostForm(request.POST)
-        if form.is_valid():
+    # Validate form data
+    form = NewPostForm(request.POST)
+    if form.is_valid():
 
-            # Create new post in database
-            data = form.cleaned_data
-            p = Post(content = data["content"], author = User.objects.get(pk=request.user.id))
-            p.save()
-            messages.success(request, "Successfully added a new post!")
+        # Create new post in database
+        data = form.cleaned_data
+        p = Post(content = data["content"], author = User.objects.get(pk=request.user.id))
+        p.save()
+        messages.success(request, "Successfully added a new post!")
 
     return HttpResponseRedirect(reverse("index"))
 
@@ -64,25 +69,28 @@ def edit_post(request, id):
     if request.method != "PUT":
         return JsonResponse({"error": "Request method must be PUT"})
 
+    # Edit the content of a post...
     p = Post.objects.get(pk=id)
 
+    # Check user is authorized to edit
     if request.user != p.author:
-        return JsonResponse({"error": "Not valid user"})
+        return JsonResponse({"error": "User not authorized"}, status=403)
 
+    # Update post content and save
     data = json.loads(request.body)
     p.content = data["newContent"]
     p.save()
     
     return JsonResponse({"success": "Post has been edited"})
 
-@csrf_exempt
+
 @login_required
 def like_post(request, id):
     if request.method != "PUT":
         return JsonResponse({"error": "Request method must be PUT"})
     
+    # Gather info about post likes
     p = Post.objects.get(pk=id)
-
     likers = p.likers.all()
 
     try:
@@ -104,12 +112,10 @@ def like_post(request, id):
         return JsonResponse({"error": "Something went wrong"})
 
 
-@csrf_exempt
 def profile(request, name):
     if request.method != 'GET' and request.method != 'PUT':
-
-        print(f"Method was: {request.method}")
-        return HttpResponse('Error')
+        messages.error(request, "Invalid request method")
+        return HttpResponseRedirect(reverse("index"))
     
     # Query database for info about profile user
     profile = User.objects.get(username = name)
@@ -207,7 +213,6 @@ def register(request):
         return render(request, "network/register.html")
 
 
-
 def paginate(request, posts, num):
 
     # Helper function for pagination
@@ -218,8 +223,9 @@ def paginate(request, posts, num):
     return page_obj
 
 
-
 def liked_posts(request):
+
+    # Returns a list of liked posts, if any
     if request.user.is_authenticated:
         return request.user.liked_posts.all()
 
